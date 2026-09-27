@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>WEB GAME TEST</title>
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;width:100%;height:100%;background:#111;font-family:Arial,sans-serif;color:white}
+body{display:flex;align-items:center;justify-content:center;overflow:hidden}
+#game{position:relative;width:100vw;height:100vh;max-width:1200px;max-height:800px;overflow:hidden;background:#4c3b68}
+.scene{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;transition:opacity .35s}
+#scene1{background:linear-gradient(160deg,#77659c,#25243c)}
+#scene2{background:linear-gradient(160deg,#9b78a8,#344a64)}
+.card{padding:28px;text-align:center;background:rgba(0,0,0,.32);border:1px solid rgba(255,255,255,.25);border-radius:18px;max-width:90%}
+h1{margin:0 0 10px;font-size:clamp(28px,7vw,58px)}
+p{font-size:clamp(16px,3vw,22px)}
+button{border:0;border-radius:12px;padding:14px 22px;margin:7px;background:#f1b6e7;color:#24152a;font-weight:bold;font-size:17px;cursor:pointer;touch-action:manipulation}
+button:active{transform:scale(.97)}
+#dialogue{position:absolute;left:4%;right:4%;bottom:4%;background:rgba(10,10,18,.9);border:1px solid rgba(255,255,255,.3);border-radius:16px;padding:18px 20px;min-height:125px;z-index:5}
+#speaker{font-weight:bold;margin-bottom:8px;color:#f1b6e7}
+#text{font-size:clamp(17px,3.5vw,24px);line-height:1.35;white-space:pre-wrap}
+#next{float:right;margin:10px 0 0}
+#choices{display:none;position:absolute;left:50%;bottom:23%;transform:translateX(-50%);z-index:6;text-align:center;width:min(92%,500px)}
+#restart{display:none;position:absolute;top:14px;right:14px;z-index:10}
+</style>
+</head>
+<body>
+<main id="game">
+<section id="scene1" class="scene">
+  <div class="card">
+    <h1>WEB GAME TEST</h1>
+    <p>This is a tiny browser-release test for THE DREAM.</p>
+    <button id="play">▶ PLAY TEST</button>
+  </div>
+</section>
+
+<section id="scene2" class="scene" style="opacity:0">
+  <div class="card"><h1>It works.</h1><p id="sceneMessage">You're playing the game through a browser.</p></div>
+</section>
+
+<div id="dialogue" style="display:none">
+  <div id="speaker">BOB</div>
+  <div id="text"></div>
+  <button id="next">CONTINUE ▶</button>
+</div>
+
+<div id="choices">
+  <button id="choiceA">Tell them</button>
+  <button id="choiceB">Don't tell them</button>
+</div>
+
+<button id="restart">↻ Restart</button>
+</main>
+
+<script>
+const scene1=document.getElementById('scene1');
+const scene2=document.getElementById('scene2');
+const dialogue=document.getElementById('dialogue');
+const speaker=document.getElementById('speaker');
+const text=document.getElementById('text');
+const next=document.getElementById('next');
+const choices=document.getElementById('choices');
+const restart=document.getElementById('restart');
+const message=document.getElementById('sceneMessage');
+
+let step=0;
+const lines=[
+  ['BOB','Okay... this is a test.'],
+  ['BOB','If you can see this, the browser version is running.'],
+  ['???','So... what happens next?'],
+  ['BOB','There should be a choice here.']
+];
+
+function start(){
+  scene1.style.opacity='0';
+  setTimeout(()=>{
+    scene1.style.display='none';
+    scene2.style.opacity='1';
+    dialogue.style.display='block';
+    restart.style.display='block';
+    step=0;
+    showLine();
+  },350);
+}
+function showLine(){
+  const [who,words]=lines[step];
+  speaker.textContent=who;
+  text.textContent=words;
+}
+function advance(){
+  if(step<lines.length-1){step++;showLine();}
+  else{
+    next.style.display='none';
+    choices.style.display='block';
+  }
+}
+function choose(answer){
+  choices.style.display='none';
+  speaker.textContent='BOB';
+  text.textContent=answer==='yes'
+    ? 'You chose the first option. Choices work!'
+    : 'You chose the second option. Choices work!';
+  next.style.display='inline-block';
+  next.textContent='RESTART TEST';
+  next.onclick=()=>location.reload();
+}
+document.getElementById('play').addEventListener('click',start);
+next.addEventListener('click',advance);
+document.getElementById('choiceA').addEventListener('click',()=>choose('yes'));
+document.getElementById('choiceB').addEventListener('click',()=>choose('no'));
+restart.addEventListener('click',()=>location.reload());
+</script>
+</body>
+</html>
